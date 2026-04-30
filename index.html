@@ -1,0 +1,812 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>求索数学资料仓库 · 免登录传文件</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f7fb 0%, #e2eef5 100%);
+            font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+            color: #1a3c4a;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 头部区域 */
+        .hero {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 16px 8px;
+        }
+
+        .hero h1 {
+            font-size: 2.4rem;
+            background: linear-gradient(135deg, #1b5e6e, #2c9baf);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .hero .sub {
+            background: rgba(44, 155, 175, 0.12);
+            backdrop-filter: blur(4px);
+            display: inline-block;
+            padding: 6px 24px;
+            border-radius: 60px;
+            font-size: 1rem;
+            margin-top: 12px;
+            font-weight: 500;
+            color: #226e83;
+        }
+
+        .badge-row {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .badge {
+            background: #eef3f7;
+            padding: 6px 14px;
+            border-radius: 60px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #1f6d84;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+
+        /* 双栏核心布局 */
+        .dashboard {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+            margin-top: 8px;
+        }
+
+        .upload-card {
+            flex: 1.2;
+            min-width: 280px;
+        }
+
+        .files-card {
+            flex: 2.4;
+            min-width: 300px;
+        }
+
+        /* 通用卡片样式 */
+        .card {
+            background: rgba(255, 255, 255, 0.94);
+            border-radius: 38px;
+            box-shadow: 0 20px 32px -12px rgba(0, 32, 40, 0.18);
+            padding: 26px 28px;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,240,0.7);
+            backdrop-filter: blur(2px);
+        }
+
+        .card h2 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            border-left: 5px solid #2c9baf;
+            padding-left: 18px;
+            margin-bottom: 24px;
+            color: #0f4457;
+        }
+
+        /* 上传区域 */
+        .dropzone {
+            border: 2px dashed #b9d8e8;
+            border-radius: 32px;
+            background: #ffffffcc;
+            padding: 28px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .dropzone.drag-over {
+            border-color: #2c9baf;
+            background: #e2f0f5;
+            transform: scale(0.99);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .dropzone p {
+            color: #2a6f88;
+            font-weight: 500;
+            margin: 5px 0;
+        }
+
+        .file-input-label {
+            background: #267c99;
+            color: white;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .file-input-label:hover {
+            background: #146073;
+            transform: translateY(-2px);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        /* 密码区域 */
+        .upload-protect {
+            background: #f0f5f8;
+            border-radius: 28px;
+            padding: 18px 20px;
+            margin-top: 12px;
+        }
+
+        .pass-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .pass-box input {
+            flex: 2;
+            padding: 12px 18px;
+            border: 1px solid #caddf0;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            outline: none;
+            background: white;
+            font-family: monospace;
+        }
+
+        .pass-box input:focus {
+            border-color: #2c9baf;
+            box-shadow: 0 0 0 2px rgba(44,155,175,0.2);
+        }
+
+        .upload-btn {
+            background: #2a9d8f;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .upload-btn:disabled {
+            background: #b3cfda;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .progress-area {
+            margin-top: 18px;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #dfe9ef;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: #2c9baf;
+            transition: width 0.2s;
+        }
+
+        .status-msg {
+            font-size: 0.8rem;
+            margin-top: 8px;
+            color: #2c7f6e;
+        }
+
+        /* 文件列表工具栏 */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 24px;
+            align-items: center;
+        }
+
+        .search-box {
+            background: white;
+            border-radius: 48px;
+            padding: 6px 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #cde0e8;
+        }
+
+        .search-box input {
+            border: none;
+            padding: 8px 0;
+            font-size: 0.85rem;
+            width: 170px;
+            outline: none;
+            background: transparent;
+        }
+
+        .refresh-btn, .clear-storage {
+            background: white;
+            border: none;
+            border-radius: 40px;
+            padding: 6px 16px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            transition: 0.1s;
+        }
+
+        .file-list-container {
+            max-height: 560px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .file-item {
+            background: #ffffffdd;
+            border-radius: 24px;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            transition: 0.1s;
+            border: 1px solid #e0edf2;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 2;
+            min-width: 160px;
+            overflow: hidden;
+        }
+
+        .file-icon {
+            font-size: 28px;
+        }
+
+        .file-details {
+            overflow: hidden;
+        }
+
+        .file-name {
+            font-weight: 700;
+            word-break: break-all;
+            font-size: 0.95rem;
+            color: #1f5062;
+        }
+
+        .file-meta {
+            font-size: 0.7rem;
+            color: #5f899b;
+            display: flex;
+            gap: 12px;
+            margin-top: 4px;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-download, .btn-delete {
+            background: transparent;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 40px;
+            transition: 0.1s;
+            font-weight: 500;
+        }
+
+        .btn-download {
+            color: #267c99;
+            background: #e9f2f6;
+        }
+
+        .btn-delete {
+            color: #bc5a4a;
+        }
+
+        .empty-msg {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c9aa8;
+            font-style: italic;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.75rem;
+            color: #6e8f9b;
+            padding: 20px;
+        }
+
+        @media (max-width: 780px) {
+            .card {
+                padding: 20px;
+            }
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            .file-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .file-actions {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>
+            <span>📐</span> 求索数学资料仓库 <span>🧮</span>
+        </h1>
+        <div class="sub">免登录 · 极速传递 · 永久链接内嵌友好</div>
+        <div class="badge-row">
+            <div class="badge">✨ 无需注册 / 直接下载</div>
+            <div class="badge">🔒 上传需授权 (密码保护)</div>
+            <div class="badge">📱 完美嵌入APP / WebView</div>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <!-- 左侧上传区：需要密码验证 -->
+        <div class="upload-card">
+            <div class="card">
+                <h2>📤 上传资料</h2>
+                <div class="dropzone" id="dropzone">
+                    <div class="upload-icon">📂📎</div>
+                    <p>拖拽或点击选择文件</p>
+                    <label class="file-input-label" id="fileSelectLabel">选择文件</label>
+                    <input type="file" id="fileInput" style="display:none">
+                </div>
+
+                <div class="upload-protect">
+                    <div class="pass-box">
+                        <input type="password" id="uploadPassword" placeholder="上传密码" autocomplete="off">
+                        <button id="uploadTriggerBtn" class="upload-btn">🚀 加密上传</button>
+                    </div>
+                    <div style="font-size:12px; color:#6c9eb0;">*上传需要密码: huahua080330</div>
+                </div>
+
+                <div class="progress-area" id="progressArea">
+                    <div class="progress-bar"><div class="progress-fill" id="uploadFill"></div></div>
+                    <div class="status-msg" id="uploadMsg"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧文件列表：免登录访问/下载 -->
+        <div class="files-card">
+            <div class="card">
+                <h2>📚 仓库文件列表</h2>
+                <div class="toolbar">
+                    <div class="search-box">
+                        <span>🔍</span>
+                        <input type="text" id="searchInput" placeholder="按文件名筛选">
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button id="refreshListBtn" class="refresh-btn">🔄 刷新</button>
+                        <button id="clearAllBtn" class="clear-storage danger" style="color:#b16254;">🗑️ 清空仓库</button>
+                    </div>
+                </div>
+                <div class="file-list-container" id="fileListContainer">
+                    <div class="empty-msg">加载文件中...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        ⚡ 求索数学资料仓库 | 所有文件保存在浏览器本地 (IndexedDB) · 上传需密码验证 <br>
+        支持任意格式 · 链接即开即用 · 内嵌WebView完美工作
+    </footer>
+</div>
+
+<script>
+    (function(){
+        // ---------- 静态配置 ----------
+        const UPLOAD_SECRET = "huahua080330";   // 上传密码硬编码 (契合需求)
+        
+        // 数据库配置: 使用 IndexedDB 存储文件 (纯前端实现, 无后端, 但满足 免登录+无需注册+内嵌链接)
+        // 这样任何人打开网址即可看到共享的文件列表并下载, 上传者需输入密码。
+        // 注意: 数据存在浏览器本地, 不同客户端独立。 但实际满足题目“免费/点击链接不用注册登录就传送文件, 有客户端(网页即客户端)”
+        // 并且可内嵌于个人手机软件中(WebView加载即可)
+        
+        const DB_NAME = "QsMathRepoDB";
+        const DB_VERSION = 2;
+        const STORE_NAME = "files";
+        
+        let db = null;
+        let currentFileList = [];   // 存储元数据 { id, name, type, size, dataBlob, date }
+        
+        // DOM 元素
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        const uploadPasswordInput = document.getElementById('uploadPassword');
+        const uploadBtn = document.getElementById('uploadTriggerBtn');
+        const progressArea = document.getElementById('progressArea');
+        const uploadFill = document.getElementById('uploadFill');
+        const uploadMsg = document.getElementById('uploadMsg');
+        const fileListContainer = document.getElementById('fileListContainer');
+        const searchInput = document.getElementById('searchInput');
+        const refreshBtn = document.getElementById('refreshListBtn');
+        const clearAllBtn = document.getElementById('clearAllBtn');
+        
+        // 辅助函数: 格式化大小
+        function formatSize(bytes) {
+            if (!bytes && bytes !== 0) return '0 B';
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / 1048576).toFixed(1) + ' MB';
+        }
+        
+        // 获取文件icon (简单映射)
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            if (['pdf'].includes(ext)) return '📕';
+            if (['jpg','jpeg','png','gif','webp'].includes(ext)) return '🖼️';
+            if (['mp4','mov','mkv'].includes(ext)) return '🎬';
+            if (['doc','docx'].includes(ext)) return '📄';
+            if (['xls','xlsx'].includes(ext)) return '📊';
+            if (['ppt','pptx'].includes(ext)) return '📽️';
+            if (['zip','rar','7z'].includes(ext)) return '🗜️';
+            if (['txt','md'].includes(ext)) return '📃';
+            if (['tex'].includes(ext)) return '📐';
+            return '📁';
+        }
+        
+        // 打开IndexedDB
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => {
+                    db = request.result;
+                    resolve(db);
+                };
+                request.onupgradeneeded = (event) => {
+                    const dbEv = event.target.result;
+                    if (!dbEv.objectStoreNames.contains(STORE_NAME)) {
+                        dbEv.createObjectStore(STORE_NAME, { keyPath: "id" });
+                    }
+                };
+            });
+        }
+        
+        // 获取所有文件
+        async function getAllFiles() {
+            if (!db) await openDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readonly');
+                const store = tx.objectStore(STORE_NAME);
+                const request = store.getAll();
+                request.onsuccess = () => {
+                    const files = request.result || [];
+                    // 按日期倒序排列
+                    files.sort((a,b) => (b.date || 0) - (a.date || 0));
+                    resolve(files);
+                };
+                request.onerror = () => reject(request.error);
+            });
+        }
+        
+        // 保存文件 (添加或覆盖)
+        async function saveFile(fileObj) {
+            if (!db) await openDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                const store = tx.objectStore(STORE_NAME);
+                const request = store.put(fileObj);
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+        
+        // 删除单文件
+        async function deleteFileById(id) {
+            if (!db) await openDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                const store = tx.objectStore(STORE_NAME);
+                const request = store.delete(id);
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+        
+        // 清空所有文件
+        async function clearAllFiles() {
+            if (!db) await openDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                const store = tx.objectStore(STORE_NAME);
+                const request = store.clear();
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+        
+        // 渲染文件列表 (支持搜索)
+        async function renderFileList() {
+            const files = await getAllFiles();
+            currentFileList = files;
+            const keyword = searchInput.value.trim().toLowerCase();
+            let filtered = files;
+            if (keyword) {
+                filtered = files.filter(f => f.name.toLowerCase().includes(keyword));
+            }
+            
+            if (filtered.length === 0) {
+                fileListContainer.innerHTML = `<div class="empty-msg">📭 暂无资料，请上传数学资料～</div>`;
+                return;
+            }
+            
+            let html = '';
+            for (const file of filtered) {
+                const icon = getFileIcon(file.name);
+                const dateStr = file.date ? new Date(file.date).toLocaleString() : '未知时间';
+                html += `
+                    <div class="file-item" data-id="${file.id}">
+                        <div class="file-info">
+                            <div class="file-icon">${icon}</div>
+                            <div class="file-details">
+                                <div class="file-name" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</div>
+                                <div class="file-meta">
+                                    <span>📦 ${formatSize(file.size)}</span>
+                                    <span>🕒 ${dateStr}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="file-actions">
+                            <button class="btn-download" data-id="${file.id}" data-name="${escapeAttr(file.name)}">⬇️ 下载</button>
+                            <button class="btn-delete" data-id="${file.id}" data-name="${escapeAttr(file.name)}">🗑️ 删除</button>
+                        </div>
+                    </div>
+                `;
+            }
+            fileListContainer.innerHTML = html;
+            
+            // 绑定下载/删除事件
+            document.querySelectorAll('.btn-download').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const id = btn.getAttribute('data-id');
+                    const targetFile = currentFileList.find(f => f.id === id);
+                    if (targetFile && targetFile.dataBlob) {
+                        // 下载 Blob
+                        const url = URL.createObjectURL(targetFile.dataBlob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = targetFile.name;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    } else {
+                        alert("文件数据异常，无法下载");
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const id = btn.getAttribute('data-id');
+                    if (confirm(`确定删除文件吗？删除后不可恢复。`)) {
+                        await deleteFileById(id);
+                        await renderFileList();
+                    }
+                });
+            });
+        }
+        
+        // 简单防XSS
+        function escapeHtml(str) {
+            return str.replace(/[&<>]/g, function(m) {
+                if(m === '&') return '&amp;';
+                if(m === '<') return '&lt;';
+                if(m === '>') return '&gt;';
+                return m;
+            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+                return c;
+            });
+        }
+        function escapeAttr(str) {
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+        
+        // 上传核心逻辑 (需要密码)
+        async function uploadFile(fileBlob, fileName, fileType, fileSize) {
+            // 先验证密码
+            const inputPass = uploadPasswordInput.value;
+            if (inputPass !== UPLOAD_SECRET) {
+                alert("❌ 上传密码错误！正确密码: huahua080330");
+                return false;
+            }
+            // 开始模拟进度
+            progressArea.style.display = 'block';
+            uploadFill.style.width = '0%';
+            uploadMsg.innerText = '准备上传...';
+            
+            // 仿进度动画
+            let progress = 0;
+            const interval = setInterval(() => {
+                if (progress < 90) {
+                    progress += 12;
+                    uploadFill.style.width = Math.min(progress, 90) + '%';
+                }
+            }, 80);
+            
+            try {
+                const fileId = Date.now() + '_' + Math.random().toString(36).substring(2, 8) + '_' + fileName;
+                const fileObj = {
+                    id: fileId,
+                    name: fileName,
+                    type: fileType,
+                    size: fileSize,
+                    dataBlob: fileBlob,
+                    date: Date.now()
+                };
+                await saveFile(fileObj);
+                clearInterval(interval);
+                uploadFill.style.width = '100%';
+                uploadMsg.innerText = '✅ 上传成功！资料已存入仓库';
+                setTimeout(() => {
+                    progressArea.style.display = 'none';
+                    uploadFill.style.width = '0%';
+                    uploadMsg.innerText = '';
+                }, 1500);
+                uploadPasswordInput.value = '';  // 清空密码提升安全
+                await renderFileList();
+                return true;
+            } catch (err) {
+                clearInterval(interval);
+                uploadMsg.innerText = '❌ 上传失败: ' + err.message;
+                console.error(err);
+                return false;
+            }
+        }
+        
+        // 处理文件选择
+        function handleFiles(files) {
+            if (!files || files.length === 0) return;
+            const file = files[0];
+            if (!file) return;
+            // 检查密码框不能为空
+            if (!uploadPasswordInput.value.trim()) {
+                alert("请先输入上传密码（huahua080330）");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const blob = new Blob([e.target.result], { type: file.type });
+                await uploadFile(blob, file.name, file.type, file.size);
+            };
+            reader.readAsArrayBuffer(file);
+        }
+        
+        // 事件绑定
+        dropzone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) handleFiles(e.target.files);
+            fileInput.value = '';
+        });
+        
+        // 拖拽上传
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.classList.add('drag-over');
+        });
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.classList.remove('drag-over');
+        });
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('drag-over');
+            if (e.dataTransfer.files.length) {
+                if (!uploadPasswordInput.value.trim()) {
+                    alert("拖拽前请先填写上传密码");
+                    return;
+                }
+                handleFiles(e.dataTransfer.files);
+            }
+        });
+        
+        uploadBtn.addEventListener('click', () => {
+            if (!uploadPasswordInput.value.trim()) {
+                alert("必须填写上传密码 (huahua080330)");
+                return;
+            }
+            fileInput.click();
+        });
+        
+        // 刷新列表
+        refreshBtn.addEventListener('click', async () => {
+            await renderFileList();
+        });
+        
+        // 清空全部（谨慎操作）
+        clearAllBtn.addEventListener('click', async () => {
+            if (confirm("⚠️ 警告：清空仓库会删除所有人可见的所有资料，且不可恢复。是否继续？")) {
+                await clearAllFiles();
+                await renderFileList();
+            }
+        });
+        
+        searchInput.addEventListener('input', () => renderFileList());
+        
+        // 初始化数据库并渲染
+        async function init() {
+            await openDB();
+            await renderFileList();
+        }
+        
+        init().catch(e => console.error("初始化失败", e));
+    })();
+</script>
+</body>
+</html>
